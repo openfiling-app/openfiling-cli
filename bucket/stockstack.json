@@ -1,12 +1,12 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "StockStack CLI — 日本株ファンダメンタル分析ツール",
   "homepage": "https://stockstack.app",
   "license": "MIT",
   "architecture": {
     "64bit": {
-      "url": "https://github.com/stockstack-app/stockstack-cli/releases/download/v0.2.0/stockstack_windows_amd64.zip",
-      "hash": "c442dd93752a48c6b61a249217339ce4e445e9af03bb94f87adeac29b4a9f675"
+      "url": "https://github.com/stockstack-app/stockstack-cli/releases/download/v0.3.0/stockstack_windows_amd64.zip",
+      "hash": "82e9b19afef4e0c205bd68cb5e3e2dc41994330a1a17409fa7d7555e94df9184"
     }
   },
   "bin": "stockstack.exe",
