@@ -1,6 +1,6 @@
 # Disclosure Analysis Patterns
 
-Example patterns for retrieving and analyzing annual securities reports (有価証券報告書) using the StockStack CLI. These are starting points — adapt the `jq` filters to suit your specific analysis needs.
+Example patterns for retrieving and analyzing annual securities reports (有価証券報告書) using the OpenFiling CLI. These are starting points — adapt the `jq` filters to suit your specific analysis needs.
 
 ## Workflow
 
@@ -16,10 +16,10 @@ Disclosure content retrieval follows a 3-step flow:
 
 ```bash
 # List all annual reports
-stockstack filings list 7203
+openfiling filings list 7203
 
 # Get the latest filing ID
-stockstack filings list 7203 | jq -r '.filings[0].filingId'
+openfiling filings list 7203 | jq -r '.filings[0].filingId'
 # → "S100VWVY"
 ```
 
@@ -27,20 +27,20 @@ stockstack filings list 7203 | jq -r '.filings[0].filingId'
 
 ```bash
 # Section list with block index
-stockstack disclosure sections S100VWVY
+openfiling disclosure sections S100VWVY
 
 # List all block keys and labels
-stockstack disclosure sections S100VWVY | jq '.sections[].blocks[] | {key, label}'
+openfiling disclosure sections S100VWVY | jq '.sections[].blocks[] | {key, label}'
 ```
 
 ### Retrieve Block Content
 
 ```bash
 # Get block content (markdown format, default)
-stockstack disclosure block S100VWVY BusinessRisksTextBlock
+openfiling disclosure block S100VWVY BusinessRisksTextBlock
 
 # Get as plain text
-stockstack disclosure block S100VWVY BusinessRisksTextBlock --content-format text
+openfiling disclosure block S100VWVY BusinessRisksTextBlock --content-format text
 ```
 
 ## Analysis Patterns
@@ -49,22 +49,22 @@ stockstack disclosure block S100VWVY BusinessRisksTextBlock --content-format tex
 
 ```bash
 # Find risk-related blocks in the "business" section
-stockstack disclosure sections S100VWVY | \
+openfiling disclosure sections S100VWVY | \
   jq '.sections[] | select(.key == "business") | .blocks[] | {key, label}'
 
 # Retrieve risk content as text
-stockstack disclosure block S100VWVY BusinessRisksTextBlock --content-format text
+openfiling disclosure block S100VWVY BusinessRisksTextBlock --content-format text
 ```
 
 ### Officer Information
 
 ```bash
 # Find blocks in the "reporting_company" section
-stockstack disclosure sections S100VWVY | \
+openfiling disclosure sections S100VWVY | \
   jq '.sections[] | select(.key == "reporting_company") | .blocks[] | {key, label}'
 
 # Retrieve officer information
-stockstack disclosure block S100VWVY InformationAboutOfficersTextBlock
+openfiling disclosure block S100VWVY InformationAboutOfficersTextBlock
 ```
 
 ### Year-over-Year Comparison
@@ -73,9 +73,9 @@ Output is JSON — always extract text with `jq` before processing. Do not pipe 
 
 ```bash
 # Compare business risks across the last 3 filings
-for filing_id in $(stockstack filings list 7203 | jq -r '.filings[:3][].filingId'); do
+for filing_id in $(openfiling filings list 7203 | jq -r '.filings[:3][].filingId'); do
   echo "=== $filing_id ==="
-  stockstack disclosure block "$filing_id" BusinessRisksTextBlock | \
+  openfiling disclosure block "$filing_id" BusinessRisksTextBlock | \
     jq -r '.block.items[0].content' | head -30
   echo ""
 done
@@ -86,9 +86,9 @@ done
 ```bash
 # Compare business risks between Toyota and Honda
 for ticker in 7203 7267; do
-  filing_id=$(stockstack filings list "$ticker" | jq -r '.filings[0].filingId')
+  filing_id=$(openfiling filings list "$ticker" | jq -r '.filings[0].filingId')
   echo "=== $ticker ($filing_id) ==="
-  stockstack disclosure block "$filing_id" BusinessRisksTextBlock | \
+  openfiling disclosure block "$filing_id" BusinessRisksTextBlock | \
     jq -r '.block.items[0].content' | head -20
 done
 ```
@@ -130,14 +130,14 @@ done
 
 ```bash
 # List block labels within a specific section
-stockstack disclosure sections S100VWVY | \
+openfiling disclosure sections S100VWVY | \
   jq '.sections[] | select(.key == "business") | .blocks[].label'
 
 # Extract text content from a block
-stockstack disclosure block S100VWVY BusinessRisksTextBlock | jq -r '.block.items[].content'
+openfiling disclosure block S100VWVY BusinessRisksTextBlock | jq -r '.block.items[].content'
 
 # Blocks with multiple items (dimensioned) — check titles
-stockstack disclosure block S100VWVY SomeTextBlock | \
+openfiling disclosure block S100VWVY SomeTextBlock | \
   jq '.block.items[] | {title, snippet: (.content | .[0:80])}'
 ```
 
@@ -146,10 +146,10 @@ stockstack disclosure block S100VWVY SomeTextBlock | \
 Available as structured data via a separate command (not disclosure blocks).
 
 ```bash
-stockstack corporate shareholders 7203
+openfiling corporate shareholders 7203
 
 # Top 5 shareholders by holding ratio (latest period)
-stockstack corporate shareholders 7203 | \
+openfiling corporate shareholders 7203 | \
   jq '.periods[0].shareholders[:5][] | {name, holdingRatio}'
 ```
 

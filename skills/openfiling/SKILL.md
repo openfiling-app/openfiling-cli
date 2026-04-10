@@ -1,25 +1,25 @@
 ---
-name: stockstack
-description: "Retrieve and analyze Japanese stock fundamental data using the StockStack CLI. Covers company search, financial statements (IS/BS/CF), financial ratios (ROE/PER etc.), disclosure content (annual report sections), and watchlists via CLI commands. Use this skill when a user asks about Japanese stock tickers, earnings, financial data, securities reports, or shareholder information, or when they mention a securities code (4-5 digit number)."
-allowed-tools: Bash(stockstack *), Bash(jq *), Bash(for *), Bash(echo *)
+name: openfiling
+description: "Retrieve and analyze Japanese stock fundamental data using the OpenFiling CLI. Covers company search, financial statements (IS/BS/CF), financial ratios (ROE/PER etc.), disclosure content (annual report sections), and watchlists via CLI commands. Use this skill when a user asks about Japanese stock tickers, earnings, financial data, securities reports, or shareholder information, or when they mention a securities code (4-5 digit number)."
+allowed-tools: Bash(openfiling *), Bash(jq *), Bash(for *), Bash(echo *)
 ---
 
-# StockStack CLI
+# OpenFiling CLI
 
-StockStack is a CLI tool for Japanese stock fundamental analysis. It retrieves company financials, disclosure content, and analysis metrics as JSON.
+OpenFiling is a CLI tool for Japanese stock fundamental analysis. It retrieves company financials, disclosure content, and analysis metrics as JSON.
 
-**Why use the CLI**: The `stockstack` CLI handles API authentication, rate limiting, and error handling internally — there is no need to call the API directly. Always use CLI commands for data retrieval.
+**Why use the CLI**: The `openfiling` CLI handles API authentication, rate limiting, and error handling internally — there is no need to call the API directly. Always use CLI commands for data retrieval.
 
-**Detailed usage**: Run `stockstack --help` or `stockstack <command> --help` for full option details and available flags.
+**Detailed usage**: Run `openfiling --help` or `openfiling <command> --help` for full option details and available flags.
 
 ## Setup
 
 If authentication is not configured (commands return auth errors):
 
 ```bash
-stockstack auth login    # Open browser for OAuth login
-stockstack auth status   # Check plan and remaining quota
-stockstack auth logout   # Clear stored tokens
+openfiling auth login    # Open browser for OAuth login
+openfiling auth status   # Check plan and remaining quota
+openfiling auth logout   # Clear stored tokens
 ```
 
 ## Command Reference
@@ -27,14 +27,14 @@ stockstack auth logout   # Clear stored tokens
 ### Account Information
 
 ```bash
-stockstack account plan                            # Plan details, rate limit, daily quota
+openfiling account plan                            # Plan details, rate limit, daily quota
 ```
 
 ### Company Search
 
 ```bash
-stockstack companies list --q Toyota               # Keyword search
-stockstack companies list --market prime --limit 10 # Filter by market segment
+openfiling companies list --q Toyota               # Keyword search
+openfiling companies list --market prime --limit 10 # Filter by market segment
 ```
 
 ### Financial Statements
@@ -42,37 +42,37 @@ stockstack companies list --market prime --limit 10 # Filter by market segment
 Financial commands share common options: `--from-year`, `--to-year`, `--basis`
 
 ```bash
-stockstack financial income-statement 7203          # Income statement
-stockstack financial balance-sheet 7203             # Balance sheet
-stockstack financial cash-flow 7203                 # Cash flow statement
-stockstack financial equity 7203                    # Statement of changes in equity
-stockstack financial summary 7203                   # IS/BS/CF key items summary
-stockstack financial reporting-bases 7203           # Available accounting standards
+openfiling financial income-statement 7203          # Income statement
+openfiling financial balance-sheet 7203             # Balance sheet
+openfiling financial cash-flow 7203                 # Cash flow statement
+openfiling financial equity 7203                    # Statement of changes in equity
+openfiling financial summary 7203                   # IS/BS/CF key items summary
+openfiling financial reporting-bases 7203           # Available accounting standards
 ```
 
 ### Financial Analysis
 
 ```bash
-stockstack analysis ratios 7203                     # ROE, ROA, equity ratio, etc.
-stockstack analysis valuation 7203                  # PER, PBR, dividend yield, etc.
-stockstack analysis indicators 7203                 # Revenue growth, operating margin (normalized)
+openfiling analysis ratios 7203                     # ROE, ROA, equity ratio, etc.
+openfiling analysis valuation 7203                  # PER, PBR, dividend yield, etc.
+openfiling analysis indicators 7203                 # Revenue growth, operating margin (normalized)
 ```
 
 ### Corporate Structure
 
 ```bash
-stockstack corporate segments 7203                  # Segment list (overview)
-stockstack corporate segment 7203 <segment_key>    # Segment detail (performance data)
-stockstack corporate shareholders 7203              # Major shareholders
+openfiling corporate segments 7203                  # Segment list (overview)
+openfiling corporate segment 7203 <segment_key>    # Segment detail (performance data)
+openfiling corporate shareholders 7203              # Major shareholders
 ```
 
 ### Filings & Disclosure
 
 ```bash
-stockstack filings list 7203                                    # List annual reports
-stockstack disclosure sections <filingId>                       # Section list (with block index)
-stockstack disclosure block <filingId> <blockKey>               # Block content
-stockstack disclosure block <filingId> <blockKey> --content-format text  # Plain text format
+openfiling filings list 7203                                    # List annual reports
+openfiling disclosure sections <filingId>                       # Section list (with block index)
+openfiling disclosure block <filingId> <blockKey>               # Block content
+openfiling disclosure block <filingId> <blockKey> --content-format text  # Plain text format
 ```
 
 **Workflow**: `filings list` → `disclosure sections` → `disclosure block` (3 steps).
@@ -83,9 +83,9 @@ Content format: `--content-format markdown` (default) or `--content-format text`
 ### Watchlist
 
 ```bash
-stockstack watchlist list
-stockstack watchlist add 7203
-stockstack watchlist remove 7203
+openfiling watchlist list
+openfiling watchlist add 7203
+openfiling watchlist remove 7203
 ```
 
 ## JSON Response Structures
@@ -115,15 +115,15 @@ Row-oriented: each period contains its own `lineItems`.
 
 ```bash
 # List all line item keys and labels (latest period)
-stockstack financial income-statement 7203 | \
+openfiling financial income-statement 7203 | \
   jq '.periods[0].lineItems[] | {key, label}'
 
 # Find a specific item by label
-stockstack financial income-statement 7203 | \
+openfiling financial income-statement 7203 | \
   jq '.periods[0].lineItems[] | select(.label | contains("売上"))'
 
 # Extract values across all periods for a specific key
-stockstack financial income-statement 7203 | \
+openfiling financial income-statement 7203 | \
   jq '[.periods[] | {fiscalYear, value: (.lineItems[] | select(.key == "NetSales") | .value)}]'
 ```
 
@@ -158,11 +158,11 @@ Different structure from IS/BS/CF: each period contains `changes`, and each chan
 
 ```bash
 # List all change items in the latest period
-stockstack financial equity 7203 | \
+openfiling financial equity 7203 | \
   jq '.periods[0].changes[] | {key, label}'
 
 # Get values for a specific component across changes
-stockstack financial equity 7203 | \
+openfiling financial equity 7203 | \
   jq '.periods[0].changes[] | {label, total: (.byComponent[] | select(.memberName == "TotalNetAssets") | .value)}'
 ```
 
@@ -190,7 +190,7 @@ Same row-oriented structure with optional `abbreviation` field.
 
 ```bash
 # Extract ROE across periods
-stockstack analysis ratios 7203 | \
+openfiling analysis ratios 7203 | \
   jq '[.periods[] | {fiscalYear, roe: (.lineItems[] | select(.abbreviation == "ROE") | .value)}]'
 ```
 
@@ -200,7 +200,7 @@ Row-oriented with `reportingBasis` per period. Market metrics (PER, PBR, etc.) a
 
 ```bash
 # Get PER and PBR from latest period
-stockstack analysis valuation 7203 | \
+openfiling analysis valuation 7203 | \
   jq '.periods[0].lineItems[] | select(.label | test("PER|PBR")) | {label, value}'
 ```
 
@@ -221,10 +221,10 @@ Columnar format: `items[].values[]` parallel to `periods[]`.
 
 ```bash
 # List all normalized items
-stockstack analysis indicators 7203 | jq '.items[] | {key, label, section}'
+openfiling analysis indicators 7203 | jq '.items[] | {key, label, section}'
 
 # Extract a specific item's time series
-stockstack analysis indicators 7203 | \
+openfiling analysis indicators 7203 | \
   jq '{periods: [.periods[].fiscalYear], values: (.items[] | select(.key == "revenue") | .values)}'
 ```
 
@@ -232,7 +232,7 @@ stockstack analysis indicators 7203 | \
 
 ```bash
 # Top 5 shareholders by holding ratio (latest period)
-stockstack corporate shareholders 7203 | \
+openfiling corporate shareholders 7203 | \
   jq '.periods[0].shareholders[:5][] | {name, holdingRatio}'
 ```
 
@@ -241,8 +241,8 @@ stockstack corporate shareholders 7203 | \
 Returns an array of available reporting bases.
 
 ```bash
-stockstack financial reporting-bases 7203
-# → [{"basis":"consolidated_ifrs","consolidation":"consolidated","accountingStandard":"IFRS","fromYear":2017,"toYear":2025,"isDefault":true}, ...]
+openfiling financial reporting-bases 7203
+# → [{"basis":"consolidated_ifrs","consolidation":"consolidated","accountingStandard":"IFRS","availableFromYear":2017,"availableToYear":2025,"isDefault":true}, ...]
 ```
 
 ## Accounting Standards
@@ -251,10 +251,10 @@ Japanese companies report under **JGAAP**, **IFRS**, or **US-GAAP**. Standards v
 
 ```bash
 # Check available standards (e.g., Toyota: IFRS 2017-2025, US-GAAP 2012-2020)
-stockstack financial reporting-bases 7203
+openfiling financial reporting-bases 7203
 
 # Retrieve data with a specific standard
-stockstack financial income-statement 7203 --basis consolidated_ifrs --from-year 2022
+openfiling financial income-statement 7203 --basis consolidated_ifrs --from-year 2022
 ```
 
 `--basis` values: `consolidated_jgaap` (default), `consolidated_ifrs`, `consolidated_us_gaap`, `non_consolidated_jgaap`
@@ -268,6 +268,6 @@ For patterns beyond basic commands, see the reference documents:
 
 ## Error Handling
 
-- **Auth error**: Run `stockstack auth login` to re-authenticate
-- **Rate limit**: Wait and retry (burst: 100 req/min, daily quota: check with `stockstack account plan`)
-- **Ticker not found**: Verify the securities code (4-5 digits). Search with `stockstack companies list --q <name>`
+- **Auth error**: Run `openfiling auth login` to re-authenticate
+- **Rate limit**: Wait and retry (burst: 100 req/min, daily quota: check with `openfiling account plan`)
+- **Ticker not found**: Verify the securities code (4-5 digits). Search with `openfiling companies list --q <name>`
