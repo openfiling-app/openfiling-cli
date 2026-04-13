@@ -1,35 +1,34 @@
-# StockStack CLI
+# OpenFiling CLI
 
-日本株ファンダメンタル分析ツール [StockStack](https://stockstack.app) の CLI クライアント。
+日本株ファンダメンタル分析ツール [OpenFiling](https://openfiling.app) の CLI クライアント。
 
 ## Install
 
-### macOS (Homebrew)
+### macOS / Linux (Homebrew)
 
 ```sh
-brew install stockstack-app/stockstack/stockstack
+brew install openfiling-app/openfiling/openfiling
 ```
 
-### Shell (macOS / Linux)
-
-```sh
-curl --proto '=https' --tlsv1.2 -LsSf https://github.com/stockstack-app/stockstack-cli/releases/latest/download/stockstack-installer.sh | sh
-```
-
-### PowerShell (Windows)
+### Windows (Scoop)
 
 ```powershell
-powershell -ExecutionPolicy Bypass -c "irm https://github.com/stockstack-app/stockstack-cli/releases/latest/download/stockstack-installer.ps1 | iex"
+scoop bucket add openfiling https://github.com/openfiling-app/openfiling-cli
+scoop install openfiling
 ```
+
+### Manual
+
+[Releases](https://github.com/openfiling-app/openfiling-cli/releases/latest) から OS / アーキテクチャに合った `openfiling_*` アーカイブをダウンロードし、`openfiling` バイナリを `PATH` に配置してください。
 
 ## Update
 
 ```sh
-stockstack update
+openfiling update
 ```
 
 ## Usage
 
 ```sh
-stockstack --help
+openfiling --help
 ```
