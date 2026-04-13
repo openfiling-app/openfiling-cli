@@ -1,12 +1,12 @@
 {
-  "version": "0.4.0",
-  "description": "OpenFiling CLI — 日本株ファンダメンタル分析ツール",
+  "version": "0.4.1",
+  "description": "OpenFiling CLI — 日本企業の財務データ基盤 CLI",
   "homepage": "https://openfiling.app",
   "license": "MIT",
   "architecture": {
     "64bit": {
-      "url": "https://github.com/openfiling-app/openfiling-cli/releases/download/v0.4.0/openfiling_windows_amd64.zip",
-      "hash": "db476b9b326d49790b9833f45197e1d0fe4024869088d27870f6c0e0524445de"
+      "url": "https://github.com/openfiling-app/openfiling-cli/releases/download/v0.4.1/openfiling_windows_amd64.zip",
+      "hash": "f642502910913cb3f10babef30e2f101dba2271f447b7e4be3505b39e9a6a0e1"
     }
   },
   "bin": "openfiling.exe",
